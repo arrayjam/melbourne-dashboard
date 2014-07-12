@@ -1,0 +1,12 @@
+{
+  "name": "city dashboard",
+  "authors": [
+    "Yuri Feldman <yuri@tbqh.net>",
+    "Steve Bennett <stevage@gmail.com>",
+    "Andrew Chin <hi@andrewchin.com.au>"
+  ],
+  "dependencies": {
+    "react": "~0.10.0",
+    "d3": "~3.4.6"
+  }
+}
