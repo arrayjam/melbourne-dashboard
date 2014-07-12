@@ -15,20 +15,43 @@ var Dashboard = React.createClass({
 
   render: function() {
     return (
-      <Weather weatherData={this.state.widgets.weather} />
+      <div className="app">
+        <header>
+          <div className="logo"></div>
+          <div className="middle-buttons">
+            <div className="middle-button">Living</div>
+            <div className="middle-button">Breathing</div>
+          </div>
+          <div className="message">Hello, Sunday</div>
+        </header>
+        <div className="middle">
+          <Weather weatherData={this.state.widgets.weather} />
+          <Map />
+        </div>
+        <div className="metrics">
+          METRICS
+        </div>
+      </div>
+    );
+  }
+});
+
+var Map = React.createClass({
+  render: function() {
+    return (
+      <div>MAP! MAP!MAP!</div>
     );
   }
 });
 
 var Weather = React.createClass({
-  getMessage: function() {
-    if (this.props.weatherData.type === "rain") {
+  getMessage: function(type) {
+    if (type === "rain") {
       return "Weather sucks, man.";
     }
   },
 
   render: function() {
-
     return (
       <div className="weather">
         <div>
@@ -36,7 +59,7 @@ var Weather = React.createClass({
             <h1>{this.props.weatherData.temperature}</h1>
             <img src={rainIcon} />
           </div>
-          <div>{this.getMessage()}</div>
+          <div>{this.getMessage(this.props.weatherData.type)}</div>
         </div>
       </div>
     );
