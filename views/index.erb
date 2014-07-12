@@ -80,14 +80,13 @@
     background-color: #3e5257;
   }
 
-  .pedestrian.widget h1,
+  .pedestrians.widget h1,
   .twitter.widget h1 {
     background-color: #657579;
   }
 
   .widget {
     height: 430px;
-    border-right: 1px solid #dfdfdf;
     border-bottom: 1px solid #dfdfdf;
   }
 
@@ -106,9 +105,10 @@
     border-bottom: 1px solid #dfdfdf;
   }
 
-  .events-list {
+  .widget .widget-body {
     overflow: scroll;
     height: 390px;
+    border-right: 1px solid #dfdfdf;
   }
 
   .event:last-child {
@@ -124,6 +124,39 @@
     font-size: 13px;
     color: #78c19e;
     text-transform: uppercase;
+  }
+
+  .pedestrians .widget-body {
+    padding: 30px;
+  }
+
+  .pedestrians .pedestrians-graph {
+    width: 60px;
+  }
+
+  .pedestrians .pedestrians-graph-label {
+    font-size: 13px;
+    line-height: 25px;
+    color: black;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .pedestrians .pedestrians-graph .guage {
+    height: 300px;
+    position: relative;
+    background-color: #e3e3e3;
+    border-radius: 10px;
+  }
+
+  .pedestrians .pedestrians-graph .guage-fill {
+    background-color: #46c9e0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
   }
 </style>
 <body>

@@ -26,6 +26,7 @@ var Dashboard = React.createClass({
         </div>
         <div className="metrics">
           <Events />
+          <Pedestrians percent={80} />
           <Train />
           METRICS
         </div>
@@ -113,8 +114,27 @@ var Events = React.createClass({
     return (
       <div className="col-xs-3 events widget">
         <h1>Things On Today</h1>
-        <div className="events-list">
+        <div className="widget-body">
           {content}
+        </div>
+      </div>
+    );
+  }
+});
+
+var Pedestrians = React.createClass({
+  render: function() {
+    return (
+      <div className="col-xs-3 pedestrians widget">
+        <h1>Is it Busy in the City?</h1>
+        <div className="widget-body">
+          <div className="pedestrians-graph">
+            <div className="pedestrians-graph-label">busy</div>
+            <div className="guage">
+              <div className="guage-fill" style={{height: this.props.percent + "%"}}></div>
+            </div>
+            <div className="pedestrians-graph-label">quiet</div>
+          </div>
         </div>
       </div>
     );
