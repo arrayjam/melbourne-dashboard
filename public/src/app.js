@@ -25,6 +25,7 @@ var Dashboard = React.createClass({
           <Map />
         </div>
         <div className="metrics">
+          <Events />
           <Train />
           METRICS
         </div>
@@ -46,7 +47,7 @@ var Hello = React.createClass({
     return (
       <div className="today col-xs-2 pull-right">
         <div className="hello">Hello, {day(this.state.timestamp)}</div>
-        <div className="time">{time(this.state.timestamp)}{ampm(this.state.timestamp).toLowerCase()} | {date(this.state.timestamp)}</div>
+        <div className="time">{time(this.state.timestamp)}{ampm(this.state.timestamp).toLowerCase()}&nbsp;&nbsp;|&nbsp;&nbsp;{date(this.state.timestamp)}</div>
       </div>
     );
 
@@ -77,6 +78,44 @@ var Weather = React.createClass({
           <img className="icon" src="/images/cloud.png" alt="cloud" />
         </div>
         <div className="weather-message">{this.getMessage(this.props.weatherData.type)}</div>
+      </div>
+    );
+  }
+});
+
+var Events = React.createClass({
+  getInitialState: function() {
+    return { events: [] };
+  },
+
+  componentDidMount: function() {
+    d3.json("/events", function(data) {
+      console.log(data);
+      this.setState({events: data});
+    }.bind(this));
+  },
+
+  render: function() {
+    var content;
+    if (this.state.events.length === 0) {
+      content = <div className="empty">Fetching events...</div>;
+    } else {
+      content = this.state.events.map(function(event) {
+        return (
+          <div className="event">
+            <div className="event-name">{event.title}</div>
+            <div className="link"><a href={event.link}>See this</a></div>
+          </div>
+        );
+      });
+    }
+
+    return (
+      <div className="col-xs-3 events widget">
+        <h1>Things On Today</h1>
+        <div className="events-list">
+          {content}
+        </div>
       </div>
     );
   }

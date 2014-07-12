@@ -11,6 +11,17 @@
     padding: 15px;
   }
 
+  .today {
+    text-align: right;
+    padding: 20px 25px 0 0;
+    color: #657579;
+  }
+
+  .today .hello {
+    font-size: 30px;
+    font-weight: 100;
+  }
+
   .middle {
     height: 400px;
   }
@@ -52,6 +63,67 @@
   .map {
     background: url("/images/mockup_map.png") no-repeat center center;
     height: 100%;
+  }
+
+  h1 {
+    margin: 0;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 16px;
+    line-height: 40px;
+    color: white;
+    text-align: center;
+  }
+
+  .events.widget h1,
+  .train.widget h1 {
+    background-color: #3e5257;
+  }
+
+  .pedestrian.widget h1,
+  .twitter.widget h1 {
+    background-color: #657579;
+  }
+
+  .widget {
+    height: 430px;
+    border-right: 1px solid #dfdfdf;
+    border-bottom: 1px solid #dfdfdf;
+  }
+
+  .widget:last-child {
+    border-right: none;
+  }
+
+  .events .empty {
+    text-align: center;
+    font-size: 20px;
+    padding: 30px;
+  }
+
+  .event {
+    padding: 20px 30px;
+    border-bottom: 1px solid #dfdfdf;
+  }
+
+  .events-list {
+    overflow: scroll;
+    height: 390px;
+  }
+
+  .event:last-child {
+    border-bottom: none;
+  }
+
+  .events .event-name {
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .events .link {
+    font-size: 13px;
+    color: #78c19e;
+    text-transform: uppercase;
   }
 </style>
 <body>
