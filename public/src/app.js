@@ -165,63 +165,101 @@ var Pedestrians = React.createClass({
 var Train = React.createClass({
   getInitialState: function() {
     return {
-      line: "",
-      direction: "to",
-      trains: [],
+      stop: "",
+      direction: "downtown",
+      times: [],
+      towhere: "",
+      wherefrom: "",
     };
   },
 
   directionChange: function(direction) {
-    if (direction === "from" || direction === "to") this.setState({direction: direction});
+    if (direction === "downtown" || direction === "uptown") this.setState({direction: direction});
   },
 
   handleSubmit: function() {
-    var line = this.refs.line.getDOMNode().value.trim();
-    if (line) {
-      this.setState({line: line});
+    var stop = this.refs.stop.getDOMNode().value.trim();
+    if (stop) {
+      this.setState({stop: stop});
+      console.log("/trains/" + this.state.direction + "/" + stop);
+      d3.json("/trains/" + this.state.direction + "/" + stop, function(data) {
+        console.log(JSON.stringify(data));
+        var update = {};
+        //"2014-07-12T22:40:00Z"
+        var utc = d3.time.format.utc("%Y-%m-%dT%H:%M:%SZ");
+        update.times = data.trains.map(function(train) {
+          return utc.parse(train.time_timetable_utc);
+        }).sort(d3.ascending);
+
+        if (this.state.direction === "downtown") {
+          update.towhere = "CBD";
+          update.wherefrom = data.from;
+        } else {
+          update.towhere = data.to;
+          update.wherefrom = "CBD";
+        }
+
+        this.setState(update);
+      }.bind(this));
     }
     return false;
   },
 
   render: function() {
-    if (this.state.line !== "" && this.state.trains.length === 0) {
+    if (this.state.stop !== "" && this.state.times.length === 0) {
       return (
         <div className="col-xs-3 train widget">
           <h1>CBD Train Times</h1>
           <div className="empty">Loading...</div>
         </div>
       );
-    } else if (this.state.line === "") {
-      var directionClassFrom = cx({
+    } else if (this.state.stop === "") {
+      var directionClassDowntown = cx({
         directionButton: true,
-        from: true,
-        active: this.state.direction === "from"
+        downtown: true,
+        active: this.state.direction === "downtown"
       });
 
-      var directionClassTo = cx({
+      var directionClassUptown = cx({
         directionButton: true,
-        to: true,
-        active: this.state.direction === "to"
+        uptown: true,
+        active: this.state.direction === "uptown"
       });
 
       return (
         <div className="col-xs-3 train widget">
           <h1>CBD Train Times</h1>
           <div className="directionButtons">
-            <div className={directionClassFrom} onClick={this.directionChange.bind(this, "from")}>From</div>
-            <div className={directionClassTo} onClick={this.directionChange.bind(this, "to")}>To</div>
+            <div className={directionClassDowntown} onClick={this.directionChange.bind(this, "downtown")}>To the CBD</div>
+            <div className={directionClassUptown} onClick={this.directionChange.bind(this, "uptown")}>From the CBD</div>
           </div>
           <form onSubmit={this.handleSubmit}>
-            <input type="text" placeholder="eg. Footscray" ref="line" className="form-control" />
+            <input type="text" placeholder="eg. Footscray" ref="stop" className="form-control" />
           </form>
         </div>
       );
     } else {
-      //      var explanation = (this.state.line === "from") ?
+      console.log(this.state.times);
+      var now = +new Date(),
+          format = d3.time.format("%_I:%M%p");
+      var remaining = this.state.times
+          .filter(function(time) { return time > now; })
+          .map(function(time) { return { time: time, remaining: time - now }; })
+          .map(function(train) {
+            return (
+              <div><span>{format(train.time)}</span><span>{~~(train.remaining / 1000 / 60)}mins</span></div>
+            );
+          });
+
+      console.log(remaining);
+
       return (
         <div className="col-xs-3 train widget">
           <h1>Want to catch a train?</h1>
-          <div>{this.state.line}</div>
+          <div><span className="from">{this.state.wherefrom}</span> to <span className="to">{this.state.towhere}</span></div>
+          <div>
+            {remaining}
+          </div>
         </div>
       );
     }
@@ -234,3 +272,6 @@ React.renderComponent(
   document.body
 );
 
+
+// var test =
+// {"from":"Mordialloc Station","trains":[{"platform":{"realtime_id":0,"stop":{"suburb":"Mordialloc","transport_type":"train","stop_id":1134,"location_name":"Mordialloc","lat":-38.006588,"lon":145.087662,"distance":0},"direction":{"linedir_id":24,"direction_id":0,"direction_name":"City (Flinders Street)","line":{"transport_type":"train","line_id":6,"line_name":"Frankston","line_number":"Frankston"}}},"run":{"transport_type":"train","run_id":12257,"num_skipped":0,"destination_id":1071,"destination_name":"Flinders Street"},"time_timetable_utc":"2014-07-12T23:04:00Z","time_realtime_utc":null,"flags":""},{"platform":{"realtime_id":0,"stop":{"suburb":"Mordialloc","transport_type":"train","stop_id":1134,"location_name":"Mordialloc","lat":-38.006588,"lon":145.087662,"distance":0},"direction":{"linedir_id":24,"direction_id":0,"direction_name":"City (Flinders Street)","line":{"transport_type":"train","line_id":6,"line_name":"Frankston","line_number":"Frankston"}}},"run":{"transport_type":"train","run_id":12259,"num_skipped":0,"destination_id":1071,"destination_name":"Flinders Street"},"time_timetable_utc":"2014-07-12T23:24:00Z","time_realtime_utc":null,"flags":""},{"platform":{"realtime_id":0,"stop":{"suburb":"Mordialloc","transport_type":"train","stop_id":1134,"location_name":"Mordialloc","lat":-38.006588,"lon":145.087662,"distance":0},"direction":{"linedir_id":24,"direction_id":0,"direction_name":"City (Flinders Street)","line":{"transport_type":"train","line_id":6,"line_name":"Frankston","line_number":"Frankston"}}},"run":{"transport_type":"train","run_id":12261,"num_skipped":0,"destination_id":1071,"destination_name":"Flinders Street"},"time_timetable_utc":"2014-07-12T23:44:00Z","time_realtime_utc":null,"flags":""},{"platform":{"realtime_id":0,"stop":{"suburb":"Mordialloc","transport_type":"train","stop_id":1134,"location_name":"Mordialloc","lat":-38.006588,"lon":145.087662,"distance":0},"direction":{"linedir_id":24,"direction_id":0,"direction_name":"City (Flinders Street)","line":{"transport_type":"train","line_id":6,"line_name":"Frankston","line_number":"Frankston"}}},"run":{"transport_type":"train","run_id":12263,"num_skipped":0,"destination_id":1071,"destination_name":"Flinders Street"},"time_timetable_utc":"2014-07-12T23:54:00Z","time_realtime_utc":null,"flags":""},{"platform":{"realtime_id":0,"stop":{"suburb":"Mordialloc","transport_type":"train","stop_id":1134,"location_name":"Mordialloc","lat":-38.006588,"lon":145.087662,"distance":0},"direction":{"linedir_id":24,"direction_id":0,"direction_name":"City (Flinders Street)","line":{"transport_type":"train","line_id":6,"line_name":"Frankston","line_number":"Frankston"}}},"run":{"transport_type":"train","run_id":12265,"num_skipped":0,"destination_id":1071,"destination_name":"Flinders Street"},"time_timetable_utc":"2014-07-13T00:04:00Z","time_realtime_utc":null,"flags":""},{"platform":{"realtime_id":0,"stop":{"suburb":"Mordialloc","transport_type":"train","stop_id":1134,"location_name":"Mordialloc","lat":-38.006588,"lon":145.087662,"distance":0},"direction":{"linedir_id":24,"direction_id":0,"direction_name":"City (Flinders Street)","line":{"transport_type":"train","line_id":6,"line_name":"Frankston","line_number":"Frankston"}}},"run":{"transport_type":"train","run_id":12267,"num_skipped":0,"destination_id":1071,"destination_name":"Flinders Street"},"time_timetable_utc":"2014-07-13T00:14:00Z","time_realtime_utc":null,"flags":""},{"platform":{"realtime_id":0,"stop":{"suburb":"Mordialloc","transport_type":"train","stop_id":1134,"location_name":"Mordialloc","lat":-38.006588,"lon":145.087662,"distance":0},"direction":{"linedir_id":24,"direction_id":0,"direction_name":"City (Flinders Street)","line":{"transport_type":"train","line_id":6,"line_name":"Frankston","line_number":"Frankston"}}},"run":{"transport_type":"train","run_id":12269,"num_skipped":0,"destination_id":1071,"destination_name":"Flinders Street"},"time_timetable_utc":"2014-07-13T00:24:00Z","time_realtime_utc":null,"flags":""},{"platform":{"realtime_id":0,"stop":{"suburb":"Mordialloc","transport_type":"train","stop_id":1134,"location_name":"Mordialloc","lat":-38.006588,"lon":145.087662,"distance":0},"direction":{"linedir_id":24,"direction_id":0,"direction_name":"City (Flinders Street)","line":{"transport_type":"train","line_id":6,"line_name":"Frankston","line_number":"Frankston"}}},"run":{"transport_type":"train","run_id":12271,"num_skipped":0,"destination_id":1071,"destination_name":"Flinders Street"},"time_timetable_utc":"2014-07-13T00:34:00Z","time_realtime_utc":null,"flags":""},{"platform":{"realtime_id":0,"stop":{"suburb":"Mordialloc","transport_type":"train","stop_id":1134,"location_name":"Mordialloc","lat":-38.006588,"lon":145.087662,"distance":0},"direction":{"linedir_id":24,"direction_id":0,"direction_name":"City (Flinders Street)","line":{"transport_type":"train","line_id":6,"line_name":"Frankston","line_number":"Frankston"}}},"run":{"transport_type":"train","run_id":12273,"num_skipped":0,"destination_id":1071,"destination_name":"Flinders Street"},"time_timetable_utc":"2014-07-13T00:44:00Z","time_realtime_utc":null,"flags":""},{"platform":{"realtime_id":0,"stop":{"suburb":"Mordialloc","transport_type":"train","stop_id":1134,"location_name":"Mordialloc","lat":-38.006588,"lon":145.087662,"distance":0},"direction":{"linedir_id":24,"direction_id":0,"direction_name":"City (Flinders Street)","line":{"transport_type":"train","line_id":6,"line_name":"Frankston","line_number":"Frankston"}}},"run":{"transport_type":"train","run_id":12275,"num_skipped":0,"destination_id":1071,"destination_name":"Flinders Street"},"time_timetable_utc":"2014-07-13T00:54:00Z","time_realtime_utc":null,"flags":""},{"platform":{"realtime_id":0,"stop":{"suburb":"Mordialloc","transport_type":"train","stop_id":1134,"location_name":"Mordialloc","lat":-38.006588,"lon":145.087662,"distance":0},"direction":{"linedir_id":24,"direction_id":0,"direction_name":"City (Flinders Street)","line":{"transport_type":"train","line_id":6,"line_name":"Frankston","line_number":"Frankston"}}},"run":{"transport_type":"train","run_id":12277,"num_skipped":0,"destination_id":1071,"destination_name":"Flinders Street"},"time_timetable_utc":"2014-07-13T01:04:00Z","time_realtime_utc":null,"flags":""},{"platform":{"realtime_id":0,"stop":{"suburb":"Mordialloc","transport_type":"train","stop_id":1134,"location_name":"Mordialloc","lat":-38.006588,"lon":145.087662,"distance":0},"direction":{"linedir_id":24,"direction_id":0,"direction_name":"City (Flinders Street)","line":{"transport_type":"train","line_id":6,"line_name":"Frankston","line_number":"Frankston"}}},"run":{"transport_type":"train","run_id":12279,"num_skipped":0,"destination_id":1071,"destination_name":"Flinders Street"},"time_timetable_utc":"2014-07-13T01:14:00Z","time_realtime_utc":null,"flags":""},{"platform":{"realtime_id":0,"stop":{"suburb":"Mordialloc","transport_type":"train","stop_id":1134,"location_name":"Mordialloc","lat":-38.006588,"lon":145.087662,"distance":0},"direction":{"linedir_id":24,"direction_id":0,"direction_name":"City (Flinders Street)","line":{"transport_type":"train","line_id":6,"line_name":"Frankston","line_number":"Frankston"}}},"run":{"transport_type":"train","run_id":12281,"num_skipped":0,"destination_id":1071,"destination_name":"Flinders Street"},"time_timetable_utc":"2014-07-13T01:24:00Z","time_realtime_utc":null,"flags":""},{"platform":{"realtime_id":0,"stop":{"suburb":"Mordialloc","transport_type":"train","stop_id":1134,"location_name":"Mordialloc","lat":-38.006588,"lon":145.087662,"distance":0},"direction":{"linedir_id":24,"direction_id":0,"direction_name":"City (Flinders Street)","line":{"transport_type":"train","line_id":6,"line_name":"Frankston","line_number":"Frankston"}}},"run":{"transport_type":"train","run_id":12283,"num_skipped":0,"destination_id":1071,"destination_name":"Flinders Street"},"time_timetable_utc":"2014-07-13T01:34:00Z","time_realtime_utc":null,"flags":""},{"platform":{"realtime_id":0,"stop":{"suburb":"Mordialloc","transport_type":"train","stop_id":1134,"location_name":"Mordialloc","lat":-38.006588,"lon":145.087662,"distance":0},"direction":{"linedir_id":24,"direction_id":0,"direction_name":"City (Flinders Street)","line":{"transport_type":"train","line_id":6,"line_name":"Frankston","line_number":"Frankston"}}},"run":{"transport_type":"train","run_id":12285,"num_skipped":0,"destination_id":1071,"destination_name":"Flinders Street"},"time_timetable_utc":"2014-07-13T01:44:00Z","time_realtime_utc":null,"flags":""},{"platform":{"realtime_id":0,"stop":{"suburb":"Mordialloc","transport_type":"train","stop_id":1134,"location_name":"Mordialloc","lat":-38.006588,"lon":145.087662,"distance":0},"direction":{"linedir_id":24,"direction_id":0,"direction_name":"City (Flinders Street)","line":{"transport_type":"train","line_id":6,"line_name":"Frankston","line_number":"Frankston"}}},"run":{"transport_type":"train","run_id":12287,"num_skipped":0,"destination_id":1071,"destination_name":"Flinders Street"},"time_timetable_utc":"2014-07-13T01:54:00Z","time_realtime_utc":null,"flags":""},{"platform":{"realtime_id":0,"stop":{"suburb":"Mordialloc","transport_type":"train","stop_id":1134,"location_name":"Mordialloc","lat":-38.006588,"lon":145.087662,"distance":0},"direction":{"linedir_id":24,"direction_id":0,"direction_name":"City (Flinders Street)","line":{"transport_type":"train","line_id":6,"line_name":"Frankston","line_number":"Frankston"}}},"run":{"transport_type":"train","run_id":12289,"num_skipped":0,"destination_id":1071,"destination_name":"Flinders Street"},"time_timetable_utc":"2014-07-13T02:04:00Z","time_realtime_utc":null,"flags":""},{"platform":{"realtime_id":0,"stop":{"suburb":"Mordialloc","transport_type":"train","stop_id":1134,"location_name":"Mordialloc","lat":-38.006588,"lon":145.087662,"distance":0},"direction":{"linedir_id":24,"direction_id":0,"direction_name":"City (Flinders Street)","line":{"transport_type":"train","line_id":6,"line_name":"Frankston","line_number":"Frankston"}}},"run":{"transport_type":"train","run_id":12291,"num_skipped":0,"destination_id":1071,"destination_name":"Flinders Street"},"time_timetable_utc":"2014-07-13T02:14:00Z","time_realtime_utc":null,"flags":""},{"platform":{"realtime_id":0,"stop":{"suburb":"Mordialloc","transport_type":"train","stop_id":1134,"location_name":"Mordialloc","lat":-38.006588,"lon":145.087662,"distance":0},"direction":{"linedir_id":24,"direction_id":0,"direction_name":"City (Flinders Street)","line":{"transport_type":"train","line_id":6,"line_name":"Frankston","line_number":"Frankston"}}},"run":{"transport_type":"train","run_id":12293,"num_skipped":0,"destination_id":1071,"destination_name":"Flinders Street"},"time_timetable_utc":"2014-07-13T02:24:00Z","time_realtime_utc":null,"flags":""},{"platform":{"realtime_id":0,"stop":{"suburb":"Mordialloc","transport_type":"train","stop_id":1134,"location_name":"Mordialloc","lat":-38.006588,"lon":145.087662,"distance":0},"direction":{"linedir_id":24,"direction_id":0,"direction_name":"City (Flinders Street)","line":{"transport_type":"train","line_id":6,"line_name":"Frankston","line_number":"Frankston"}}},"run":{"transport_type":"train","run_id":12295,"num_skipped":0,"destination_id":1071,"destination_name":"Flinders Street"},"time_timetable_utc":"2014-07-13T02:34:00Z","time_realtime_utc":null,"flags":""}]}

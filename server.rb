@@ -40,15 +40,15 @@ get "/trains/:direction/:station" do
     JSON.parse(res.body)
   end
 
-  def broad_next_train_departures(dev_id, key, base, stop_id)
+  def broad_next_train_departures(dev_id, key, base, stop_id, limit)
     mode = "0"
     stop = stop_id
-    limit = "20" # Get more so we can find the right direction_id
 
     ptv_request(base, "/v2/mode/#{mode}/stop/#{stop}/departures/by-destination/limit/#{limit}?devid=#{dev_id}")
   end
 
   def search_stopname(dev_id, key, base, name)
+    name = URI.escape(name)
     stops = ptv_request(base, "/v2/search/#{name}?devid=#{dev_id}")
     return "oh nooooes" if stops.length == 0 # like, do some programming on this plz
     actual_stops = stops.select do |stop|
@@ -65,7 +65,6 @@ get "/trains/:direction/:station" do
     }
   end
 
-
   def healthcheck(dev_id, key, base)
     ptv_request(base, "/v2/healthcheck?timestamp=#{Time.now.utc.iso8601}&devid=#{dev_id}")
   end
@@ -73,19 +72,33 @@ get "/trains/:direction/:station" do
 
   direction = params[:direction]
   station = params[:station]
+  flinders_stop_id = 1071
 
-  #puts healthcheck(dev_id, key, base)
-  stop = search_stopname(dev_id, key, base, station)
-  puts stop
-  departures_from_station = broad_next_train_departures(dev_id, key, base, stop[:stop_id]).to_h["values"].select do |value|
-    if direction == "from"
+  if direction == "downtown"
+    stop = search_stopname(dev_id, key, base, station)
+    puts stop
+    departures_from_station = broad_next_train_departures(dev_id, key, base, stop[:stop_id], 20).to_h["values"].select do |value|
       value["platform"]["direction"]["direction_id"] == 0
-    else
-      value["platform"]["direction"]["direction_id"] != 0
     end
+
+    {from: stop[:name], trains: departures_from_station}.to_json
+  elsif direction == "uptown"
+    stop = search_stopname(dev_id, key, base, station)
+    puts stop
+
+    wanted_line_ids = []
+    departures_from_station = broad_next_train_departures(dev_id, key, base, stop[:stop_id], 20).to_h["values"].select do |value|
+      wanted_line_ids << value["platform"]["direction"]["line"]["line_id"]
+      #value["platform"]["direction"]["direction_id"] == 0
+    end
+    wanted_line_ids.uniq!
+    departures_from_cbd = broad_next_train_departures(dev_id, key, base, flinders_stop_id, 20).to_h["values"].select do |value|
+      wanted_line_ids.include? value["platform"]["direction"]["line"]["line_id"]
+    end
+    {to: stop[:name], trains: departures_from_cbd}.to_json
   end
 
-  departures_from_station.to_json
+  #puts healthcheck(dev_id, key, base)
 
 end
 
