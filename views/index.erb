@@ -1,9 +1,57 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <link rel="stylesheet" href="/css/bootstrap.min.css">
+<link href='http://fonts.googleapis.com/css?family=Roboto:100|Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
 <style>
+  body {
+    font-family: "Open Sans", sans-serif;
+  }
+
   .logo {
     padding: 15px;
+  }
+
+  .middle {
+    height: 400px;
+  }
+
+  .weather {
+    background: url("/images/melbourne_weather.jpg") no-repeat center center;
+    height: 100%;
+    color: white;
+    padding: 35px 35px 0 35px;
+  }
+
+  .temperature {
+    position: absolute;
+    bottom: 0;
+    left: -10px;
+    font-family: "Roboto", sans-serif;
+    font-size: 130px;
+    line-height: 130px;
+    font-weight: 100;
+  }
+
+  .weather .weather-top {
+    position: relative;
+    height: 305px;
+    border-bottom: 1px solid white;
+  }
+
+  .weather .icon {
+    position: absolute;
+    bottom: 8px;
+    right: 0;
+  }
+
+  .weather .weather-message {
+    font-size: 16px;
+    line-height: 60px;
+  }
+
+  .map {
+    background: url("/images/mockup_map.png") no-repeat center center;
+    height: 100%;
   }
 </style>
 <body>

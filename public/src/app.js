@@ -18,7 +18,7 @@ var Dashboard = React.createClass({
       <div className="app">
         <header className="clearfix">
           <div className="logo col-xs-3"><img src="/images/logo.png" /></div>
-          <Hello className="today col-xs-2 pull-right" />
+          <Hello />
         </header>
         <div className="middle">
           <Weather weatherData={this.state.widgets.weather} />
@@ -44,7 +44,7 @@ var Hello = React.createClass({
         ampm = d3.time.format("%p"),
         date = d3.time.format("%e %B %Y");
     return (
-      <div>
+      <div className="today col-xs-2 pull-right">
         <div className="hello">Hello, {day(this.state.timestamp)}</div>
         <div className="time">{time(this.state.timestamp)}{ampm(this.state.timestamp).toLowerCase()} | {date(this.state.timestamp)}</div>
       </div>
@@ -57,7 +57,7 @@ var Hello = React.createClass({
 var Map = React.createClass({
   render: function() {
     return (
-      <div>MAP! MAP!MAP!</div>
+      <div className="col-xs-9 map"></div>
     );
   }
 });
@@ -71,13 +71,12 @@ var Weather = React.createClass({
 
   render: function() {
     return (
-      <div className="weather">
-        <div>
-          <div>
-            <h1>{this.props.weatherData.temperature}</h1>
-          </div>
-          <div>{this.getMessage(this.props.weatherData.type)}</div>
+      <div className="weather col-xs-3">
+        <div className="weather-top">
+          <div className="temperature">{this.props.weatherData.temperature}&deg;</div>
+          <img className="icon" src="/images/cloud.png" alt="cloud" />
         </div>
+        <div className="weather-message">{this.getMessage(this.props.weatherData.type)}</div>
       </div>
     );
   }
