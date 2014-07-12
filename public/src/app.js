@@ -26,7 +26,7 @@ var Dashboard = React.createClass({
         </div>
         <div className="metrics">
           <Events />
-          <Pedestrians percent={80} />
+          <Pedestrians percent={82} />
           <Train />
           METRICS
         </div>
@@ -38,6 +38,12 @@ var Dashboard = React.createClass({
 var Hello = React.createClass({
   getInitialState: function() {
     return { timestamp: new Date() };
+  },
+
+  componentDidMount: function() {
+    setInterval(function() {
+      this.setState({ timestamp: new Date() });
+    }.bind(this), 1000);
   },
 
   render: function() {
@@ -91,7 +97,6 @@ var Events = React.createClass({
 
   componentDidMount: function() {
     d3.json("/events", function(data) {
-      console.log(data);
       this.setState({events: data});
     }.bind(this));
   },
@@ -103,9 +108,9 @@ var Events = React.createClass({
     } else {
       content = this.state.events.map(function(event) {
         return (
-          <div className="event">
+          <div className="event" key={event.guid}>
             <div className="event-name">{event.title}</div>
-            <div className="link"><a href={event.link}>See this</a></div>
+            <div className="fat-link"><a href={event.link}>See this</a></div>
           </div>
         );
       });
@@ -123,17 +128,32 @@ var Events = React.createClass({
 });
 
 var Pedestrians = React.createClass({
+  getMessage: function() {
+    if (this.props.percent > 80) {
+      return <div>It’s really busy right now.<br />Maybe there’s something on?</div>;
+    } else {
+      return "Pretty quiet.";
+    }
+  },
+
   render: function() {
     return (
       <div className="col-xs-3 pedestrians widget">
         <h1>Is it Busy in the City?</h1>
         <div className="widget-body">
+          <div className="busy">
+            {this.getMessage()}
+          </div>
           <div className="pedestrians-graph">
             <div className="pedestrians-graph-label">busy</div>
             <div className="guage">
               <div className="guage-fill" style={{height: this.props.percent + "%"}}></div>
             </div>
             <div className="pedestrians-graph-label">quiet</div>
+          </div>
+          <div className="links">
+            <a href="http://www.thatsmelbourne.com.au/Pages/Home.aspx" className="fat-link">See what's on</a><br />
+            <a href="https://data.melbourne.vic.gov.au/Transport/Pedestrian-Counts/b2ak-trbp" className="fat-link">See foot traffic data</a>
           </div>
         </div>
       </div>
