@@ -1,5 +1,7 @@
 /** @jsx React.DOM */
 
+var cx = React.addons.classSet;
+
 var Dashboard = React.createClass({
   getInitialState: function() {
     return {widgets: {
@@ -28,7 +30,6 @@ var Dashboard = React.createClass({
           <Events />
           <Pedestrians percent={82} />
           <Train />
-          METRICS
         </div>
       </div>
     );
@@ -164,39 +165,61 @@ var Pedestrians = React.createClass({
 var Train = React.createClass({
   getInitialState: function() {
     return {
-      "line": "",
-      "direction": "city"
+      line: "",
+      direction: "to",
+      trains: [],
     };
   },
 
   directionChange: function(direction) {
-    if (direction === "from" || direction === "to") this.setState({"direction": direction});
+    if (direction === "from" || direction === "to") this.setState({direction: direction});
   },
 
   handleSubmit: function() {
     var line = this.refs.line.getDOMNode().value.trim();
-    if (line) this.setState({"line": line});
+    if (line) {
+      this.setState({line: line});
+    }
     return false;
   },
 
   render: function() {
-    if (this.state.line === "") {
+    if (this.state.line !== "" && this.state.trains.length === 0) {
       return (
-        <div>
+        <div className="col-xs-3 train widget">
           <h1>CBD Train Times</h1>
-          <div>
-            <div className="directionButton" onClick={this.directionChange.bind(this, "from")}>From</div>
-            <div className="directionButton" onClick={this.directionChange.bind(this, "to")}>To</div>
+          <div className="empty">Loading...</div>
+        </div>
+      );
+    } else if (this.state.line === "") {
+      var directionClassFrom = cx({
+        directionButton: true,
+        from: true,
+        active: this.state.direction === "from"
+      });
+
+      var directionClassTo = cx({
+        directionButton: true,
+        to: true,
+        active: this.state.direction === "to"
+      });
+
+      return (
+        <div className="col-xs-3 train widget">
+          <h1>CBD Train Times</h1>
+          <div className="directionButtons">
+            <div className={directionClassFrom} onClick={this.directionChange.bind(this, "from")}>From</div>
+            <div className={directionClassTo} onClick={this.directionChange.bind(this, "to")}>To</div>
           </div>
           <form onSubmit={this.handleSubmit}>
-            <input type="text" placeholder="eg. Footscray" ref="line" />
+            <input type="text" placeholder="eg. Footscray" ref="line" className="form-control" />
           </form>
         </div>
       );
     } else {
       //      var explanation = (this.state.line === "from") ?
       return (
-        <div>
+        <div className="col-xs-3 train widget">
           <h1>Want to catch a train?</h1>
           <div>{this.state.line}</div>
         </div>
