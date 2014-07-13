@@ -5,6 +5,7 @@
 <style>
   body {
     font-family: "Open Sans", sans-serif;
+    min-width: 1200px;
   }
 
   .logo {
@@ -87,7 +88,6 @@
 
   .widget {
     height: 430px;
-    border-bottom: 1px solid #dfdfdf;
   }
 
   .widget:last-child {
@@ -129,7 +129,7 @@
   }
 
   .pedestrians .widget-body {
-    padding: 30px;
+    padding: 30px 30px 0 30px;
   }
 
   .pedestrians .pedestrians-graph {
@@ -218,9 +218,76 @@
   .train input {
     width: 100%;
   }
+
+  .train .from,
+  .train .to {
+    font-size: 30px;
+    padding-right: 2px;
+  }
+
+  .train .desc {
+    font-size: 14px;
+    padding: 24px 30px 10px 30px;
+  }
+
+  .departure {
+    padding: 17px 15px;
+    border-top: 1px solid #e0e0e0;
+    line-height: 35px;
+  }
+
+  .departure img {
+    vertical-align: baseline;
+    margin-right: 5px;
+  }
+
+  .train .time-remaining {
+    padding-left: 60px;
+    color: #a5a5a5;
+  }
+
+  iframe#twitter-widget-0 {
+    width: 100%;
+  }
+
+  .air-quality, .rainfall {
+    background-color: #3e5257;
+  }
+
+  .water-supply {
+    background-color: #657579;
+  }
+
+  .big-widget {
+    height: 210px;
+    color: white;
+    font-size: 30px;
+    position: relative;
+  }
+
+  .big-widget div {
+    position: absolute;
+    width: 52%;
+    height: 100px;
+    top: 50px;
+    right: 30px;
+  }
+
+  .big-widget img {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+  }
+
+  footer {
+    color: #666;
+    text-align: center;
+    line-height: 40px;
+  }
 </style>
 <body>
 <script src="/vendor/react/react-with-addons.js"></script>
 <script src="/vendor/react/JSXTransformer.js"></script>
 <script src="/vendor/d3/d3.js"></script>
 <script type="text/jsx" src="/src/app.js"></script>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
