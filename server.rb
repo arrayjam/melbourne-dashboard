@@ -16,6 +16,11 @@ get "/events" do
   File.open(filename) do |file| return file.read end
 end
 
+get "/datas" do
+  content_type :json
+
+end
+
 get "/trains/:direction/:station" do
   content_type :json
   dev_id = "1000004"
