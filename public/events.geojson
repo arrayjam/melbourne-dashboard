@@ -1,0 +1,135 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "description": "What's on at <a href=\"https://online.etihadstadium.com.au/iEBMS/coe/coe_p1_all.aspx?oc=10&cc=COE1\">Etihad</a>"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.94754076004025,
+          -37.81649689372308
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "description": "<a href=\"http://www.docklandsmelbourne.com.au/events.htm\">What's on Docklands</a>"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.94309902191162,
+          -37.81663250239701
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "description": "<a href=\"http://artscentremelbourne.com.au/discover/seasons/sidney-myer-music-bowl\">What's on at Sidney Myer Music Bowl</a>"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.9744701385498,
+          -37.82314142578527
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "description": "<a href=\"http://www.qvm.com.au/event/queen-victoria-market-renewal-engagement-hub-3/\">What's on at Queen Victoria Market</a>"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.9568748474121,
+          -37.806800227889056
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "description": "<a href=\"http://events.unimelb.edu.au/\">What's on at University of Melbourne?</a>"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.96108055114746,
+          -37.797678775174305
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "description": "What's on at <a href=\"http://museumvictoria.com.au/reb/whatson/\">Royal Exhibition Buildings</a>"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.97163772583008,
+          -37.80334166837023
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "description": "<a href=\"http://www.fedsquare.com/events/\">What's on at Fed Square</a>"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.96850490570068,
+          -37.81785296925242
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "description": "<a href=\"http://artscentremelbourne.com.au/whats-on\">What's on at the Arts centre</a"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.9678826332092,
+          -37.82005653885605
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "description": "<a href=\"http://www.mcg.org.au/Events/Upcoming%20Events.aspx\">What's on at the MCG?</a>"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.9833536148071,
+          -37.81981923452094
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "description": "<a href=\"http://www.zoo.org.au/melbourne/whats-on\">What's on at Melbourne Zoo?</a>"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.9506950378418,
+          -37.78502894901506
+        ]
+      }
+    }
+  ]
+}

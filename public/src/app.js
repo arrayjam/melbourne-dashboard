@@ -1,4 +1,5 @@
 /** @jsx React.DOM */
+/* global L */
 
 var cx = React.addons.classSet;
 
@@ -71,9 +72,135 @@ var Hello = React.createClass({
 });
 
 var Map = React.createClass({
+  componentDidMount: function() {
+    var PinIcon = L.Icon.extend({
+      options: {
+        shadowUrl: '/images/shadow.png',
+        iconSize:     [25, 29],
+        shadowSize:   [58, 42],
+        iconAnchor:   [0, 29],
+        shadowAnchor: [4, 42],
+        popupAnchor:  [-3, -6]
+      }
+    });
+
+    var pinIcon = new PinIcon({iconUrl: '/images/pin.png'});
+
+
+    var map = L.map(this.refs.map.getDOMNode()).setView( [-37.8124, 144.9688], 15);
+    var basemap = L.tileLayer('http://130.56.249.208:5500/v2/OSMBright_90eab9/{z}/{x}/{y}.png', {
+
+      //L.tileLayer('http://cycletour.org/cycletour/{z}/{x}/{y}.png', {
+      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+      maxZoom: 18
+    });
+    basemap.addTo(map);
+
+    var bikeoverlay = L.tileLayer("http://130.56.249.208/tile/bikeshare/{z}/{x}/{y}.png?updated=3", {});
+    var bikepaths = L.tileLayer("http://130.56.249.208/tile/Bikepaths/{z}/{x}/{y}.png", {});
+    var footpaths = L.tileLayer("http://130.56.249.208/tile/footpaths/{z}/{x}/{y}.png?updated=1", {});
+
+    map.myoverlays = {
+      "Bikeshare2": bikeoverlay,
+      "Bike paths": bikepaths,
+      "Footpaths": footpaths
+    };
+
+    map.mylayerscontrol = L.control.layers({}, map.myoverlays);
+    map.mylayerscontrol.addTo(map);
+
+
+    var bpois = new XMLHttpRequest();
+    bpois.open("GET","/bikeshare.geojson",true);
+    bpois.onreadystatechange = function() {
+      if (bpois.readyState === 4 && bpois.status === 200) {
+        var geojson = JSON.parse(bpois.responseText);
+        var glayer = L.geoJson(geojson, {
+          onEachFeature: function (feature, layer) {
+            //layer.setOpacity(0.1);
+            layer.bindPopup(feature.properties.name + " (" + feature.properties.nbbikes  + " bikes)");
+          },
+          pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, {
+              radius: 2 + feature.properties.nbbikes*0.5,
+              fillColor: "#ff7800",
+              color: "#000",
+              weight: 1,
+              opacity: 1,
+              fillOpacity: 0.5
+            });
+          }
+
+
+
+        });
+        glayer.addTo(map);
+        //map.mylayerscontrol.addOverlay(glayer, "Bike stations");
+      }
+    };
+    bpois.send(null);
+
+    d3.json("/oldpedsensors.geojson", function(data) {
+      var glayer = L.geoJson(data, {
+        onEachFeature: function (feature, layer) {
+          //layer.setOpacity(0.1);
+          layer.bindPopup(feature.properties["Sensor Name Internal"] + "<br/>" +
+                          '<a href="http://www.pedestrian.melbourne.vic.gov.au/">Pedestrian counting system</a>"');
+        },
+        pointToLayer: function (feature, latlng) {
+          return L.circleMarker(latlng, {
+            radius: 8,
+            fillColor: "yellow",
+            color: "#000",
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.5
+          });
+        }
+      });
+      glayer.addTo(map);
+      //map.mylayerscontrol.addOverlay(glayer, "Bike stations");
+    });
+
+    d3.json("/yarra.geojson", function(data) {
+      var glayer = L.geoJson(data, {
+        style: function () {
+          return {fillOpacity: "0.0", opacity: "0.0"};
+        },
+        onEachFeature: function (feature, layer) {
+          //feature.addTo(map);
+          //layer.setOpacity(0.9);
+
+          layer.bindPopup('<a href="http://www.melbournewater.com.au/waterdata/riverhealthdata/yarra/Pages/Yarra-catchment.aspx#LowerYarra">Yarra river health</a><br>' +
+                          '<a href="http://www.melbournewater.com.au/content/rivers_and_creeks/rainfall_and_river_level_data/rainfall_and_river_level_data.asp">River level</a>');
+        }
+      });
+      glayer.addTo(map);
+      //map.mylayerscontrol.addOverlay(glayer, "Yarra");
+    });
+
+    d3.json("/events.geojson", function(data) {
+      var glayer = L.geoJson(data, {
+        onEachFeature: function (feature, layer) {
+          //layer.setOpacity(0.1);
+          layer.bindPopup(feature.properties.description);
+        },
+
+        pointToLayer: function (feature, latlng) {
+          return L.marker(
+            latlng,
+            { icon: pinIcon }
+          );
+        }
+      });
+      glayer.addTo(map);
+    });
+
+  },
   render: function() {
     return (
-      <div className="col-xs-9 map"></div>
+      <div ref="map" className="col-xs-9 map">
+      </div>
     );
   }
 });
