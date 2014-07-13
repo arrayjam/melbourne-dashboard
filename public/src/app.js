@@ -86,59 +86,50 @@ var Map = React.createClass({
 
     var pinIcon = new PinIcon({iconUrl: '/images/pin.png'});
 
-
-    var map = L.map(this.refs.map.getDOMNode()).setView( [-37.8124, 144.9688], 15);
     var basemap = L.tileLayer('http://130.56.249.208:5500/v2/OSMBright_bc41ff/{z}/{x}/{y}.png', {
 
       //L.tileLayer('http://cycletour.org/cycletour/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
       maxZoom: 18
     });
-    basemap.addTo(map);
 
     var bikeoverlay = L.tileLayer("http://130.56.249.208/tile/bikeshare/{z}/{x}/{y}.png?updated=3", {});
     var bikepaths = L.tileLayer("http://130.56.249.208/tile/Bikepaths/{z}/{x}/{y}.png", {});
     var footpaths = L.tileLayer("http://130.56.249.208/tile/footpaths/{z}/{x}/{y}.png?updated=1", {});
 
+    var map = L.map(this.refs.map.getDOMNode(), {
+      center: [-37.8124, 144.9688],
+      zoom: 15,
+      layers: [basemap, bikeoverlay, bikepaths]
+    });
+
     map.myoverlays = {
-      "Bikeshare2": bikeoverlay,
       "Bike paths": bikepaths,
       "Footpaths": footpaths
     };
 
-    map.mylayerscontrol = L.control.layers({}, map.myoverlays);
-    map.mylayerscontrol.addTo(map);
+    L.control.layers({"Bike share stations": bikeoverlay}, map.myoverlays).addTo(map);
 
 
-    var bpois = new XMLHttpRequest();
-    bpois.open("GET","/bikeshare.geojson",true);
-    bpois.onreadystatechange = function() {
-      if (bpois.readyState === 4 && bpois.status === 200) {
-        var geojson = JSON.parse(bpois.responseText);
-        var glayer = L.geoJson(geojson, {
-          onEachFeature: function (feature, layer) {
-            //layer.setOpacity(0.1);
-            layer.bindPopup(feature.properties.name + " (" + feature.properties.nbbikes  + " bikes)");
-          },
-          pointToLayer: function (feature, latlng) {
-            return L.circleMarker(latlng, {
-              radius: 2 + feature.properties.nbbikes*0.5,
-              fillColor: "#ff7800",
-              color: "#000",
-              weight: 1,
-              opacity: 1,
-              fillOpacity: 0.5
-            });
-          }
-
-
-
-        });
-        glayer.addTo(map);
-        //map.mylayerscontrol.addOverlay(glayer, "Bike stations");
-      }
-    };
-    bpois.send(null);
+    d3.json("/bikeshare.geojson",function(geojson) {
+      var glayer = L.geoJson(geojson, {
+        onEachFeature: function (feature, layer) {
+          //layer.setOpacity(0.1);
+          layer.bindPopup(feature.properties.name + " (" + feature.properties.nbbikes  + " bikes)");
+        },
+        pointToLayer: function (feature, latlng) {
+          return L.circleMarker(latlng, {
+            radius: 2 + feature.properties.nbbikes*0.5,
+            fillColor: "#ff7800",
+            color: "#000",
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.5
+          });
+        }
+      });
+      glayer.addTo(map);
+    });
 
     d3.json("/oldpedsensors.geojson", function(data) {
       var glayer = L.geoJson(data, {
