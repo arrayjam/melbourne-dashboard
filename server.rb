@@ -16,6 +16,17 @@ get "/events" do
   File.open(filename) do |file| return file.read end
 end
 
+get "/datas" do
+  content_type :json
+  files = %w(air_quality rainfall water_storage)
+  data = {}
+  files.each do |name|
+    value = JSON.parse(File.open(File.join(File.dirname(__FILE__), "data", "#{name}.json")).read)["value"]
+    data[name] = value
+  end
+  data.to_json
+end
+
 get "/trains/:direction/:station" do
   content_type :json
   dev_id = "1000004"

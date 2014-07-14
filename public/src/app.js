@@ -5,14 +5,32 @@ var cx = React.addons.classSet;
 
 var Dashboard = React.createClass({
   getInitialState: function() {
-    return {widgets: {
-    "weather": {}}};
+    return {
+      widgets: {
+        weather: {}
+      },
+      metrics: {
+        air_quality: "VERY GOOD",
+        water_storage: 74.2,
+        rainfall: 1.4
+      }
+    };
   },
 
   componentWillMount: function() {
+    this.fetchData();
+    setInterval(this.fetchData, 5 * 60 * 1000);
+  },
+
+  fetchData: function() {
+    console.log("fetchdata");
     d3.json(this.props.dataUrl, function(data) {
       console.log(data);
       this.setState({widgets: data.widgets});
+    }.bind(this));
+
+    d3.json("/datas", function(data) {
+      this.setState({metrics: data});
     }.bind(this));
   },
 
@@ -34,9 +52,9 @@ var Dashboard = React.createClass({
           <Twitter />
         </div>
         <div className="bottom">
-          <AirQuality />
-          <WaterSupply />
-          <Rainfall />
+          <AirQuality value={this.state.metrics.air_quality} />
+          <WaterSupply value={this.state.metrics.water_storage} />
+          <Rainfall value={this.state.metrics.rainfall} />
         </div>
         <footer>Made at Govhack 2014 by 3 dudes</footer>
       </div>
@@ -413,45 +431,33 @@ var Twitter = React.createClass({
 });
 
 var AirQuality = React.createClass({
-  getInitialState: function() {
-    return { value: "Very Good" };
-  },
-
   render: function() {
     return (
       <div className="big-widget air-quality col-xs-4">
         <img src="/images/wind.png" alt="WIND (of the WIND EARTH SEA FIRE trilogy)" />
-        <div>Current air quality is <strong>Very Good</strong></div>
+        <div>Current air quality is <strong>{this.props.value}</strong></div>
       </div>
     );
   }
 });
 
 var WaterSupply = React.createClass({
-  getInitialState: function() {
-    return { value: 80 };
-  },
-
   render: function() {
     return (
       <div className="big-widget water-supply col-xs-4">
         <img src="/images/water.png" alt="water (of the WIND EARTH SEA FIRE trilogy)" />
-        <div>Melbourne water supply is at <strong>{this.state.value}%</strong></div>
+        <div>Melbourne water supply is at <strong>{this.props.value}%</strong></div>
       </div>
     );
   }
 });
 
 var Rainfall = React.createClass({
-  getInitialState: function() {
-    return { value: "8mm" };
-  },
-
   render: function() {
     return (
       <div className="big-widget rainfall col-xs-4">
         <img src="/images/rain.png" alt="water (of the WIND EARTH SEA FIRE trilogy)" />
-        <div>Hourly rainfall is at <strong>{this.state.value}</strong></div>
+        <div>Hourly rainfall is at <strong>{this.props.value}mm</strong></div>
       </div>
     );
   }
