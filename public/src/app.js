@@ -75,7 +75,7 @@ var Hello = React.createClass({
 
   render: function() {
     var day = d3.time.format("%A"),
-        time = d3.time.format("%_H:%M"),
+        time = d3.time.format("%_I:%M"),
         ampm = d3.time.format("%p"),
         date = d3.time.format("%e %B %Y");
     return (
