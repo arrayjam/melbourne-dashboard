@@ -6,9 +6,6 @@ var cx = React.addons.classSet;
 var Dashboard = React.createClass({
   getInitialState: function() {
     return {
-      widgets: {
-        weather: {}
-      },
       metrics: {
         air_quality: "VERY GOOD",
         water_storage: 74.2,
@@ -23,12 +20,6 @@ var Dashboard = React.createClass({
   },
 
   fetchData: function() {
-    console.log("fetchdata");
-    d3.json(this.props.dataUrl, function(data) {
-      console.log(data);
-      this.setState({widgets: data.widgets});
-    }.bind(this));
-
     d3.json("/datas", function(data) {
       this.setState({metrics: data});
     }.bind(this));
@@ -42,7 +33,7 @@ var Dashboard = React.createClass({
           <Hello />
         </header>
         <div className="middle">
-          <Weather weatherData={this.state.widgets.weather} />
+          <Weather city="Melbourne,aus" />
           <Map />
         </div>
         <div className="metrics">
@@ -215,22 +206,59 @@ var Map = React.createClass({
 });
 
 var Weather = React.createClass({
-  getMessage: function(type) {
-    if (type === "rain") {
-      return "Weather sucks, man.";
-    }
+  getInitialState: function() {
+    return { weather: {} };
+  },
+
+  iconMap: function(iconID) {
+    iconID = iconID.replace("n", "d"); // No night icons yet
+    var map = {
+      "01d": "wi-day-sunny",
+      "02d": "wi-day-sunny-overcast",
+      "03d": "wi-cloudy",
+      "04d": "wi-cloudy",
+      "09d": "wi-rain",
+      "10d": "wi-day-rain",
+      "11d": "wi-lightning",
+      "13d": "wi-snow",
+      "50d": "wi-fog"
+    };
+    return map[iconID];
+  },
+
+  componentWillMount: function() {
+    var url = "http://api.openweathermap.org/data/2.5/weather?q=" + this.props.city;
+    d3.json(url, function(data) {
+      console.log(data);
+      this.setState({weather: data});
+    }.bind(this));
+  },
+
+  KtoC: function(K) {
+    return ~~(K - 273.15);
+  },
+
+  getMessage: function() {
+    return "Four Seasons in One Day";
   },
 
   render: function() {
-    return (
-      <div className="weather col-xs-3">
-        <div className="weather-top">
-          <div className="temperature">{this.props.weatherData.temperature}&deg;</div>
-          <img className="icon" src="/images/cloud.png" alt="cloud" />
+    if (d3.keys(this.state.weather).length === 0) {
+      return (
+        <div className="weather col-xs-3">
         </div>
-        <div className="weather-message">{this.getMessage(this.props.weatherData.type)}</div>
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div className="weather col-xs-3">
+          <div className="weather-top">
+            <div className="temperature">{this.KtoC(this.state.weather.main.temp)}&deg;</div>
+            <i className={this.iconMap(this.state.weather.weather[0].icon) + " icon"}></i>
+          </div>
+          <div className="weather-message">{this.getMessage()}</div>
+        </div>
+      );
+    }
   }
 });
 
@@ -464,7 +492,7 @@ var Rainfall = React.createClass({
 });
 
 React.renderComponent(
-  <Dashboard dataUrl="data.json"/>,
+  <Dashboard />,
   document.body
 );
 

@@ -1,5 +1,0 @@
-{"widgets": {
-  "pedestrians": { "name": "Pedestrians", "value": 0.7 },
-  "water": { "name": "Water Level", "value": 0.3 },
-  "weather": { "type": "rain", "temperature": 15 }
-}}

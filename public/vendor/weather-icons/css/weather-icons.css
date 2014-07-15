@@ -17,9 +17,9 @@
  *    "Font Awesome by Dave Gandy - http://fontawesome.io"
  *
  *  Weather Icons Bootstrap Package Author - Erik Flowers - erik@helloerik.com
- *  Weather Icons gives full credit for inspiration to Font Awesome and makes no 
- *  claim to invention, intellectual property, or ownership of methodology. 
- * 
+ *  Weather Icons gives full credit for inspiration to Font Awesome and makes no
+ *  claim to invention, intellectual property, or ownership of methodology.
+ *
  *  Support Open Source!
  *
  *  ------------------------------------------------------------------------------
@@ -28,8 +28,8 @@
  */
 @font-face {
   font-family: 'weather';
-  src: url('../font/weathericons-regular-webfont.eot');
-  src: url('../font/weathericons-regular-webfont.eot?#iefix') format('embedded-opentype'), url('../font/weathericons-regular-webfont.woff') format('woff'), url('../font/weathericons-regular-webfont.ttf') format('truetype'), url('../font/weathericons-regular-webfont.svg#weathericons-regular-webfontRg') format('svg');
+  src: url('/vendor/weather-icons/font/weathericons-regular-webfont.eot');
+  src: url('/vendor/weather-icons/font/weathericons-regular-webfont.eot?#iefix') format('embedded-opentype'), url('/vendor/weather-icons/font/weathericons-regular-webfont.woff') format('woff'), url('/vendor/weather-icons/font/weathericons-regular-webfont.ttf') format('truetype'), url('/vendor/weather-icons/font/weathericons-regular-webfont.svg#weathericons-regular-webfontRg') format('svg');
   font-weight: normal;
   font-style: normal;
 }
