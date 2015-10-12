@@ -95,8 +95,7 @@ var Map = React.createClass({
 
     var pinIcon = new PinIcon({iconUrl: '/images/pin.png'});
 
-    var basemap = L.tileLayer('http://130.56.249.208:5500/v2/OSMBright_bc41ff/{z}/{x}/{y}.png', {
-
+    var basemap = L.tileLayer('http://guru.cycletour.org/tilelive/living-breathing/{z}/{x}/{y}.png', {
       //L.tileLayer('http://cycletour.org/cycletour/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
       maxZoom: 18
